@@ -386,6 +386,13 @@ a:hover {
   margin: 0;
 }
 
+.metrics-image {
+  display: block;
+  width: min(100%, 520px);
+  height: auto;
+  margin: 0 auto;
+}
+
 .callout {
   border: 1px solid var(--line);
   padding: 0.75rem 0.9rem;
