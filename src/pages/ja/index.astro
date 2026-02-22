@@ -1,0 +1,86 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProfileCard from "../../components/ProfileCard.astro";
+---
+
+<BaseLayout
+  lang="ja"
+  pagePath="/"
+  title="Home | Koki Aoyagi"
+  description="プロフィール"
+>
+  <section class="stack-lg">
+    <p class="recent-update"><span class="recent-update-label">Recent Update:</span> 2026 Feb</p>
+
+    <ProfileCard
+      name="青柳幸樹 (Koki Aoyagi)"
+      nickname="(HukuKaihc0u / 副会長)"
+      nicknameLabel="活動名"
+      bio="大学2年生、ソフトウェアエンジニア"
+      imageSrc="/profile.jpeg"
+      imageAlt="青柳幸樹"
+    />
+
+    <section class="card stack-md">
+      <h2 class="main-title">Work</h2>
+      <ul class="history-list">
+        <li class="history-item">
+          <p class="history-period">2026.04 - 開始予定</p>
+          <div class="history-main">
+            <div class="history-head">
+              <p class="history-title">TempestAI株式会社</p>
+              <p class="history-role">ソフトウェアエンジニア・AIエンジニア</p>
+            </div>
+          </div>
+        </li>
+        <li class="history-item">
+          <p class="history-period">2025.06 - 2026.02</p>
+          <div class="history-main">
+            <div class="history-head">
+              <p class="history-title">Atlas株式会社</p>
+              <p class="history-role">ソフトウェアエンジニア、テックリード</p>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card stack-md">
+      <h2 class="main-title">Education</h2>
+      <ul class="history-list">
+        <li class="history-item">
+          <p class="history-period">2024.04 - 現在</p>
+          <div class="history-main">
+            <div class="history-head">
+              <p class="history-title">東洋大学</p>
+              <p class="history-role">コンピュータ・ソフトウェア, ビジネス構築</p>
+            </div>
+          </div>
+        </li>
+        <li class="history-item">
+          <p class="history-period">2020.04 - 2023.03</p>
+          <div class="history-main">
+            <div class="history-head">
+              <p class="history-title">都立日比谷高等学校</p>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2 class="main-title">Quick Access</h2>
+      <ul>
+        <li>
+          <a href="https://github.com/HukuKaich0u" target="_blank" rel="noreferrer" class="external-link">GitHub</a>
+        </li>
+        <li>
+          <a href="https://x.com/HukuKaich0u" target="_blank" rel="noreferrer" class="external-link">X</a>
+        </li>
+        <li>
+          <a href="https://www.linkedin.com/in/koki-aoyagi-b3b945349/" target="_blank" rel="noreferrer" class="external-link">LinkedIn</a>
+        </li>
+      </ul>
+    </section>
+  </section>
+</BaseLayout>

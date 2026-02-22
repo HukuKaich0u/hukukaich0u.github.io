@@ -1,0 +1,24 @@
+---
+import { Icon } from "astro-icon/components";
+
+const socialLinks = [
+  { label: "GitHub", href: "https://github.com/HukuKaich0u", icon: "simple-icons:github" },
+  { label: "X", href: "https://x.com/HukuKaich0u", icon: "simple-icons:x" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/koki-aoyagi-b3b945349/", icon: "simple-icons:linkedin" }
+];
+---
+
+<footer class="site-footer">
+  <div class="container footer-slim">
+    <p class="footer-handle">@ 2026 Koki Aoyagi</p>
+    <nav class="footer-social" aria-label="Social links">
+      {
+        socialLinks.map((item) => (
+          <a href={item.href} target="_blank" rel="noreferrer" aria-label={item.label} title={item.label}>
+            <Icon name={item.icon} />
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</footer>

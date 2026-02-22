@@ -1,0 +1,86 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProfileCard from "../../components/ProfileCard.astro";
+---
+
+<BaseLayout
+  lang="en"
+  pagePath="/"
+  title="Home | Koki Aoyagi"
+  description="Profile"
+>
+  <section class="stack-lg">
+    <p class="recent-update"><span class="recent-update-label">Recent Update:</span> 2026 Feb</p>
+
+    <ProfileCard
+      name="Koki Aoyagi"
+      nickname="(HukuKaihc0u)"
+      nicknameLabel="Alias"
+      bio="Second-year university student, Software Engineer."
+      imageSrc="/profile.jpeg"
+      imageAlt="Koki Aoyagi"
+    />
+
+    <section class="card stack-md">
+      <h2 class="main-title">Work</h2>
+      <ul class="history-list">
+        <li class="history-item">
+          <p class="history-period">2026.04 - Planned</p>
+          <div class="history-main">
+            <div class="history-head">
+              <p class="history-title">TempestAI, Inc</p>
+              <p class="history-role">Software Engineer, AI Engineer</p>
+            </div>
+          </div>
+        </li>
+        <li class="history-item">
+          <p class="history-period">2025.06 - 2026.02</p>
+          <div class="history-main">
+            <div class="history-head">
+              <p class="history-title">Atlas, Inc</p>
+              <p class="history-role">Software Engineer, Tech Lead</p>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card stack-md">
+      <h2 class="main-title">Education</h2>
+      <ul class="history-list">
+        <li class="history-item">
+          <p class="history-period">2024.04 - Present</p>
+          <div class="history-main">
+            <div class="history-head">
+              <p class="history-title">Toyo University</p>
+              <p class="history-role">Computer Software, Business Building</p>
+            </div>
+          </div>
+        </li>
+        <li class="history-item">
+          <p class="history-period">2020.04 - 2023.03</p>
+          <div class="history-main">
+            <div class="history-head">
+              <p class="history-title">Tokyo Metropolitan Hibiya High School</p>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2 class="main-title">Quick Access</h2>
+      <ul>
+        <li>
+          <a href="https://github.com/HukuKaich0u" target="_blank" rel="noreferrer" class="external-link">GitHub</a>
+        </li>
+        <li>
+          <a href="https://x.com/HukuKaich0u" target="_blank" rel="noreferrer" class="external-link">X</a>
+        </li>
+        <li>
+          <a href="https://www.linkedin.com/in/koki-aoyagi-b3b945349/" target="_blank" rel="noreferrer" class="external-link">LinkedIn</a>
+        </li>
+      </ul>
+    </section>
+  </section>
+</BaseLayout>

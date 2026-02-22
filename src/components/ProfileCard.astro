@@ -1,0 +1,28 @@
+---
+interface Props {
+  name: string;
+  bio: string;
+  nickname?: string;
+  nicknameLabel?: string;
+  imageSrc?: string;
+  imageAlt?: string;
+}
+
+const { name, bio, nickname, nicknameLabel, imageSrc, imageAlt = name } = Astro.props;
+---
+
+<section class="card">
+  <div class="profile-card">
+    {imageSrc && <img class="profile-image" src={imageSrc} alt={imageAlt} />}
+    <div class="profile-copy">
+      <h1>{name}</h1>
+      {nickname && (
+        <p class="profile-nickname">
+          {nicknameLabel ? <span class="profile-nickname-label">{nicknameLabel}: </span> : null}
+          {nickname}
+        </p>
+      )}
+      <p>{bio}</p>
+    </div>
+  </div>
+</section>
