@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProfileCard from "../../components/ProfileCard.astro";
+import profileImage from "../../assets/profile.jpeg";
 ---
 
 <BaseLayout
@@ -17,7 +18,7 @@ import ProfileCard from "../../components/ProfileCard.astro";
       nickname="(HukuKaihc0u)"
       nicknameLabel="Alias"
       bio="Second-year university student, Software Engineer."
-      imageSrc="/profile.jpeg"
+      image={profileImage}
       imageAlt="Koki Aoyagi"
     />
 
@@ -69,7 +70,7 @@ import ProfileCard from "../../components/ProfileCard.astro";
     </section>
 
     <section class="card">
-      <h2 class="main-title">Quick Access</h2>
+      <h2 class="main-title">Links</h2>
       <ul>
         <li>
           <a href="https://github.com/HukuKaich0u" target="_blank" rel="noreferrer" class="external-link">GitHub</a>
@@ -81,6 +82,16 @@ import ProfileCard from "../../components/ProfileCard.astro";
           <a href="https://www.linkedin.com/in/koki-aoyagi-b3b945349/" target="_blank" rel="noreferrer" class="external-link">LinkedIn</a>
         </li>
       </ul>
+    </section>
+
+    <section class="card stack-md">
+      <h2 class="main-title">GitHub Metrics</h2>
+      <img
+        class="metrics-image"
+        src="https://raw.githubusercontent.com/HukuKaich0u/HukuKaich0u/main/github-metrics.svg"
+        alt="GitHub Metrics"
+        loading="lazy"
+      />
     </section>
   </section>
 </BaseLayout>
