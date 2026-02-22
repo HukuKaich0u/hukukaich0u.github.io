@@ -4,11 +4,11 @@
     "": {
       "name": "hukukaich0u.github.io",
       "dependencies": {
-        "@astrojs/mdx": "latest",
-        "@iconify-json/lucide": "^1.2.92",
-        "@iconify-json/simple-icons": "^1.2.71",
-        "astro": "latest",
-        "astro-icon": "^1.1.5",
+        "@astrojs/mdx": "4.3.13",
+        "@iconify-json/lucide": "1.2.92",
+        "@iconify-json/simple-icons": "1.2.71",
+        "astro": "5.17.3",
+        "astro-icon": "1.1.5",
       },
     },
   },
