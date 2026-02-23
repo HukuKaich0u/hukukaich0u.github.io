@@ -15,8 +15,8 @@
 }
 
 :root[data-theme="dark"] {
-  --bg: #2c2f34;
-  --bg-accent: rgba(17, 74, 138, 0.045);
+  --bg: #101214;
+  --bg-accent: rgba(255, 255, 255, 0.03);
   --text: #e5e8ee;
   --text-title: #f7f9fc;
   --text-subtitle: #c4cbd6;
