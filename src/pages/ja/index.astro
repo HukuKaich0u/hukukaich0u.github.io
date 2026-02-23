@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProfileCard from "../../components/ProfileCard.astro";
+import profileImage from "../../assets/profile.jpeg";
 ---
 
 <BaseLayout
@@ -17,7 +18,7 @@ import ProfileCard from "../../components/ProfileCard.astro";
       nickname="(HukuKaihc0u / 副会長)"
       nicknameLabel="活動名"
       bio="大学2年生、ソフトウェアエンジニア"
-      imageSrc="/profile.jpeg"
+      image={profileImage}
       imageAlt="青柳幸樹"
     />
 
