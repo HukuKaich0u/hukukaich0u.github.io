@@ -1,19 +1,33 @@
 ---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
 interface Props {
   name: string;
   bio: string;
   nickname?: string;
   nicknameLabel?: string;
-  imageSrc?: string;
+  image?: ImageMetadata;
   imageAlt?: string;
 }
 
-const { name, bio, nickname, nicknameLabel, imageSrc, imageAlt = name } = Astro.props;
+const { name, bio, nickname, nicknameLabel, image, imageAlt = name } = Astro.props;
 ---
 
 <section class="card">
   <div class="profile-card">
-    {imageSrc && <img class="profile-image" src={imageSrc} alt={imageAlt} />}
+    {image && (
+      <Image
+        class="profile-image"
+        src={image}
+        alt={imageAlt}
+        width={214}
+        height={214}
+        sizes="214px"
+        loading="eager"
+        fetchpriority="high"
+      />
+    )}
     <div class="profile-copy">
       <h1>{name}</h1>
       {nickname && (
