@@ -134,6 +134,8 @@ a:hover {
 
 .brand {
   margin-right: auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .header-controls {
@@ -284,6 +286,10 @@ a:hover {
 
 .profile-copy h1 {
   margin: 0 0 0.4rem;
+}
+
+.profile-copy {
+  min-width: 0;
 }
 
 .profile-nickname {
@@ -465,18 +471,25 @@ a:hover {
   }
 
   .profile-card {
+    flex-direction: column;
+    align-items: center;
     gap: 1.1rem;
     padding-top: 1rem;
     padding-bottom: 0.72rem;
   }
 
   .profile-image {
-    width: 160px;
-    height: 160px;
+    width: clamp(124px, 38vw, 160px);
+    height: clamp(124px, 38vw, 160px);
   }
 
   .profile-copy h1 {
     font-size: 1.45rem;
+  }
+
+  .profile-copy {
+    width: 100%;
+    text-align: center;
   }
 
   .stack-lg > * + * {
@@ -488,25 +501,39 @@ a:hover {
   }
 
   .history-item {
-    grid-template-columns: 102px minmax(0, 1fr);
-    column-gap: 0.8rem;
-    padding: 0.35rem 0;
+    grid-template-columns: 1fr;
+    column-gap: 0;
+    row-gap: 0.22rem;
+    padding: 0.42rem 0;
   }
 
   .history-period {
-    font-size: 0.78rem;
+    white-space: normal;
+    font-size: 0.8rem;
+    line-height: 1.35;
   }
 
   .history-head {
-    gap: 0.34rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.1rem;
+  }
+
+  .history-role::before {
+    content: "- ";
   }
 
   .footer-handle {
     font-size: 0.84rem;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 0.08rem;
   }
 
   .footer-social {
     gap: 0.6rem;
+    width: 100%;
+    justify-content: center;
   }
 
   .footer-social a {
@@ -521,7 +548,13 @@ a:hover {
 }
 
 @media (max-width: 420px) {
+  .nav {
+    row-gap: 0.4rem;
+  }
+
   .brand {
+    flex-basis: 100%;
+    margin-right: 0;
     font-size: 0.84rem;
   }
 
@@ -530,11 +563,7 @@ a:hover {
   }
 
   .profile-image {
-    width: 144px;
-    height: 144px;
-  }
-
-  .history-item {
-    grid-template-columns: 92px minmax(0, 1fr);
+    width: clamp(108px, 44vw, 144px);
+    height: clamp(108px, 44vw, 144px);
   }
 }
