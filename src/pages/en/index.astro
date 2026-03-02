@@ -2,6 +2,9 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProfileCard from "../../components/ProfileCard.astro";
 import profileImage from "../../assets/profile.jpeg";
+
+const xMentionIntentUrl =
+  "https://twitter.com/intent/tweet?text=%40HukuKaich0u%20Let%27s%20have%20a%20coffee%20chat%21";
 ---
 
 <BaseLayout
@@ -20,6 +23,8 @@ import profileImage from "../../assets/profile.jpeg";
       bio="Second-year university student, Software Engineer."
       image={profileImage}
       imageAlt="Koki Aoyagi"
+      ctaLabel="Mention on X"
+      ctaHref={xMentionIntentUrl}
     />
 
     <section class="card stack-md">
