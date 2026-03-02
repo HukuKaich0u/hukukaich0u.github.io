@@ -549,21 +549,44 @@ a:hover {
 
 @media (max-width: 420px) {
   .nav {
+    flex-wrap: nowrap;
+    gap: 0.35rem;
+  }
+
+  .brand {
+    flex: 1 1 auto;
+    margin-right: auto;
+    font-size: 0.84rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .lang-switch {
+    font-size: 0.7rem;
+    flex-shrink: 0;
+  }
+
+  .theme-switch {
+    flex-shrink: 0;
+  }
+
+  .profile-image {
+    width: clamp(108px, 44vw, 144px);
+    height: clamp(108px, 44vw, 144px);
+  }
+}
+
+@media (max-width: 340px) {
+  .nav {
+    flex-wrap: wrap;
     row-gap: 0.4rem;
   }
 
   .brand {
     flex-basis: 100%;
     margin-right: 0;
-    font-size: 0.84rem;
-  }
-
-  .lang-switch {
-    font-size: 0.7rem;
-  }
-
-  .profile-image {
-    width: clamp(108px, 44vw, 144px);
-    height: clamp(108px, 44vw, 144px);
+    overflow: visible;
+    text-overflow: clip;
   }
 }
