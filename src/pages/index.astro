@@ -1,14 +1,102 @@
-<!doctype html>
-<html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Koki Aoyagi</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta http-equiv="refresh" content="0; url=/ja" />
-  </head>
-  <body>
-    <p>Redirecting to <a href="/ja">/ja</a> ...</p>
-    <p><a href="/en">English</a></p>
-  </body>
-</html>
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProfileCard from "../components/ProfileCard.astro";
+import profileImage from "../assets/profile.jpeg";
+
+const xMentionIntentUrl =
+  "https://twitter.com/intent/tweet?text=%40HukuKaich0u%20Let%27s%20have%20a%20coffee%20chat%21";
+---
+
+<BaseLayout
+  lang="ja"
+  pagePath="/"
+  title="Home | Koki Aoyagi"
+  description="プロフィール"
+>
+  <section class="stack-lg">
+    <p class="recent-update"><span class="recent-update-label">Recent Update:</span> 2026 Feb</p>
+
+    <ProfileCard
+      name="青柳幸樹 (Koki Aoyagi)"
+      nickname="(HukuKaihc0u / 副会長)"
+      nicknameLabel="活動名"
+      bio="大学2年生、ソフトウェアエンジニア"
+      image={profileImage}
+      imageAlt="青柳幸樹"
+      ctaLabel="Xで誘う"
+      ctaHref={xMentionIntentUrl}
+    />
+
+    <section class="card stack-md">
+      <h2 class="main-title">Work</h2>
+      <ul class="history-list">
+        <li class="history-item">
+          <p class="history-period">2026.04 - 開始予定</p>
+          <div class="history-main">
+            <div class="history-head">
+              <p class="history-title">TempestAI株式会社</p>
+              <p class="history-role">ソフトウェアエンジニア・BizDev</p>
+            </div>
+          </div>
+        </li>
+        <li class="history-item">
+          <p class="history-period">2025.06 - 2026.02</p>
+          <div class="history-main">
+            <div class="history-head">
+              <p class="history-title">Atlas株式会社</p>
+              <p class="history-role">ソフトウェアエンジニア、テックリード</p>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card stack-md">
+      <h2 class="main-title">Education</h2>
+      <ul class="history-list">
+        <li class="history-item">
+          <p class="history-period">2024.04 - 現在</p>
+          <div class="history-main">
+            <div class="history-head">
+              <p class="history-title">東洋大学</p>
+              <p class="history-role">コンピュータ・ソフトウェア, ビジネス構築</p>
+            </div>
+          </div>
+        </li>
+        <li class="history-item">
+          <p class="history-period">2020.04 - 2023.03</p>
+          <div class="history-main">
+            <div class="history-head">
+              <p class="history-title">都立日比谷高等学校</p>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2 class="main-title">Links</h2>
+      <ul>
+        <li>
+          <a href="https://github.com/HukuKaich0u" target="_blank" rel="noreferrer" class="external-link">GitHub</a>
+        </li>
+        <li>
+          <a href="https://x.com/HukuKaich0u" target="_blank" rel="noreferrer" class="external-link">X</a>
+        </li>
+        <li>
+          <a href="https://www.linkedin.com/in/koki-aoyagi-b3b945349/" target="_blank" rel="noreferrer" class="external-link">LinkedIn</a>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card stack-md">
+      <h2 class="main-title">GitHub Metrics</h2>
+      <img
+        class="metrics-image"
+        src="https://raw.githubusercontent.com/HukuKaich0u/HukuKaich0u/main/github-metrics.svg"
+        alt="GitHub Metrics"
+        loading="lazy"
+      />
+    </section>
+  </section>
+</BaseLayout>

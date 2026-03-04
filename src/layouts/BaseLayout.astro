@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { copyByLang, type Lang } from "../data/i18n";
+import { copyByLang, DEFAULT_LANG, type Lang } from "../data/i18n";
 import SiteFooter from "../components/SiteFooter.astro";
 import { Icon } from "astro-icon/components";
 
@@ -20,8 +20,13 @@ const {
 
 const copy = copyByLang[lang];
 const normalizedPath = pagePath.startsWith("/") ? pagePath : `/${pagePath}`;
-const toLocalePath = (targetLang: Lang) =>
-  normalizedPath === "/" ? `/${targetLang}` : `/${targetLang}${normalizedPath}`;
+const toLocalePath = (targetLang: Lang) => {
+  if (targetLang === DEFAULT_LANG) {
+    return normalizedPath;
+  }
+
+  return normalizedPath === "/" ? `/${targetLang}` : `/${targetLang}${normalizedPath}`;
+};
 const repositoryUrl = "https://github.com/hukukaich0u/hukukaich0u.github.io";
 ---
 
