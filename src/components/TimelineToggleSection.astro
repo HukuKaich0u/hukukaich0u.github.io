@@ -1,0 +1,90 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Entry {
+  period?: string;
+  title: string;
+  description?: string;
+  image?: ImageMetadata;
+  imageAlt?: string;
+}
+
+interface Props {
+  title: string;
+  entries?: Entry[];
+  emptyLabel?: string;
+  variant?: "default" | "timeline";
+  storageKey?: string;
+}
+
+const { title, entries = [], emptyLabel, variant = "default", storageKey } = Astro.props;
+---
+
+<section class="card stack-md">
+  <details
+    class:list={["toggle-section", variant === "timeline" && "toggle-section-timeline"]}
+    data-storage-key={storageKey}
+  >
+    <summary class="toggle-section-summary">
+      <h2 class="main-title toggle-section-title">{title}</h2>
+    </summary>
+
+    <div class="toggle-section-panel">
+      <div class="toggle-section-panel-inner">
+        {
+          entries.length > 0 ? (
+            <ul class="history-list">
+              {entries.map((entry) => (
+                <li class="history-item">
+                  <p class="history-period">{entry.period}</p>
+                  <div class="history-main">
+                    <div class="history-head">
+                      <p class="history-title">{entry.title}</p>
+                    </div>
+                    {entry.description && <p class="history-note muted">{entry.description}</p>}
+                    {entry.image && (
+                      <Image
+                        class="moment-image"
+                        src={entry.image}
+                        alt={entry.imageAlt ?? entry.title}
+                        sizes="(max-width: 640px) 100vw, 420px"
+                        loading="lazy"
+                      />
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="muted">{emptyLabel}</p>
+          )
+        }
+      </div>
+    </div>
+  </details>
+</section>
+
+{
+  storageKey && (
+    <script is:inline define:vars={{ storageKey }}>
+      (() => {
+        const key = `toggle-section:${storageKey}`;
+        const details = document.querySelector(`details[data-storage-key="${storageKey}"]`);
+
+        if (!(details instanceof HTMLDetailsElement)) return;
+
+        const stored = localStorage.getItem(key);
+        if (stored === "open") {
+          details.open = true;
+        } else if (stored === "closed") {
+          details.open = false;
+        }
+
+        details.addEventListener("toggle", () => {
+          localStorage.setItem(key, details.open ? "open" : "closed");
+        });
+      })();
+    </script>
+  )
+}

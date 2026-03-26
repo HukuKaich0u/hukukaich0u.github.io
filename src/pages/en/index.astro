@@ -1,10 +1,13 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProfileCard from "../../components/ProfileCard.astro";
+import TimelineToggleSection from "../../components/TimelineToggleSection.astro";
+import { getMomentEntries } from "../../data/moments";
 import profileImage from "../../assets/profile.jpeg";
 
 const xMentionIntentUrl =
   "https://twitter.com/intent/tweet?text=%40HukuKaich0u%20Let%27s%20have%20a%20coffee%20chat%21";
+const momentEntries = getMomentEntries("en");
 ---
 
 <BaseLayout
@@ -14,7 +17,7 @@ const xMentionIntentUrl =
   description="Profile"
 >
   <section class="stack-lg">
-    <p class="recent-update"><span class="recent-update-label">Recent Update:</span> 2026 Feb</p>
+    <p class="recent-update"><span class="recent-update-label">Recent Update:</span> 2026 March</p>
 
     <ProfileCard
       name="Koki Aoyagi"
@@ -30,15 +33,6 @@ const xMentionIntentUrl =
     <section class="card stack-md">
       <h2 class="main-title">Work</h2>
       <ul class="history-list">
-        <li class="history-item">
-          <p class="history-period">2026.04 - Planned</p>
-          <div class="history-main">
-            <div class="history-head">
-              <p class="history-title">TempestAI, Inc</p>
-              <p class="history-role">Software Engineer, BizDev</p>
-            </div>
-          </div>
-        </li>
         <li class="history-item">
           <p class="history-period">2025.06 - 2026.02</p>
           <div class="history-main">
@@ -73,6 +67,14 @@ const xMentionIntentUrl =
         </li>
       </ul>
     </section>
+
+    <TimelineToggleSection
+      title="Moments"
+      variant="timeline"
+      storageKey="moments"
+      entries={momentEntries}
+      emptyLabel="Moments, turning points, and small memories will gradually land here."
+    />
 
     <section class="card">
       <h2 class="main-title">Links</h2>
