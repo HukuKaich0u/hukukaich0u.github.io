@@ -1,5 +1,7 @@
 :root {
-  --bg: #ffffff;
+  --bg: linear-gradient(180deg, #ffffff 0%, #edf7ff 40%, #c2e5ff 100%);
+  --surface: #ffffff;
+  --header-bg: rgba(255, 255, 255, 0.82);
   --bg-accent: rgba(17, 74, 138, 0.045);
   --text: #2c3138;
   --text-title: #121418;
@@ -15,7 +17,9 @@
 }
 
 :root[data-theme="dark"] {
-  --bg: #101214;
+  --bg: linear-gradient(180deg, #0c1118 0%, #0f1a2b 42%, #123457 100%);
+  --surface: #101214;
+  --header-bg: rgba(16, 18, 20, 0.78);
   --bg-accent: rgba(255, 255, 255, 0.03);
   --text: #e5e8ee;
   --text-title: #f7f9fc;
@@ -119,7 +123,9 @@ a:hover {
   position: sticky;
   top: 0;
   z-index: 40;
-  background: var(--bg);
+  background: var(--header-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
 }
 
@@ -170,7 +176,7 @@ a:hover {
   align-items: center;
   justify-content: center;
   border: 1px solid var(--line);
-  background: var(--bg);
+  background: var(--surface);
   color: var(--text-title);
   padding: 0.58rem;
   font: inherit;
@@ -218,7 +224,7 @@ a:hover {
 
 .site-footer {
   margin-top: auto;
-  background: var(--bg);
+  background: transparent;
   padding: 1.28rem 0;
   border-top: 1px solid var(--line);
 }
@@ -346,7 +352,7 @@ a:hover {
   font-weight: 700;
   line-height: 1rem;
   padding-bottom: 0.08rem;
-  box-shadow: 0 0 0 2px var(--bg);
+  box-shadow: 0 0 0 2px var(--surface);
   border: 2px solid #121418;
 }
 
@@ -471,7 +477,7 @@ a:hover {
   width: 0.56rem;
   height: 0.56rem;
   border-radius: 999px;
-  background: var(--bg);
+  background: var(--surface);
   border: 1.5px solid var(--link);
   transform: translateX(-50%);
 }
