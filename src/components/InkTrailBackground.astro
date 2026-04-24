@@ -1,0 +1,296 @@
+<canvas class="ink-trail-background" data-ink-trail aria-hidden="true"></canvas>
+
+<style>
+  .ink-trail-background {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    opacity: 0.76;
+    mix-blend-mode: multiply;
+  }
+
+  :global(:root[data-theme="dark"]) .ink-trail-background {
+    opacity: 0.52;
+    mix-blend-mode: screen;
+  }
+
+  :global(.site-header),
+  :global(.main-content),
+  :global(.site-footer) {
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce), (pointer: coarse) {
+    .ink-trail-background {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const canvas = document.querySelector("[data-ink-trail]");
+
+  if (canvas instanceof HTMLCanvasElement) {
+    const context = canvas.getContext("2d", { alpha: true });
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const coarsePointer = window.matchMedia("(pointer: coarse)");
+
+    if (context && !motion.matches && !coarsePointer.matches) {
+      const simCanvas = document.createElement("canvas");
+      const simContext = simCanvas.getContext("2d", { alpha: true });
+      const pointer = { x: 0, y: 0, active: false };
+      const velocityDissipation = 0.982;
+      const dyeDissipation = 0.9996;
+      const pressureIterations = 10;
+      const forceRadius = 0.035;
+      const dyeRadius = 0.045;
+      let dpr = 1;
+      let simWidth = 1;
+      let simHeight = 1;
+      let frame = 0;
+      let idleTicks = 0;
+      let imageData;
+      let velocityX;
+      let velocityY;
+      let nextVelocityX;
+      let nextVelocityY;
+      let dyeR;
+      let dyeG;
+      let dyeB;
+      let nextDyeR;
+      let nextDyeG;
+      let nextDyeB;
+      let divergence;
+      let pressure;
+      let nextPressure;
+
+      const indexOf = (x, y) => y * simWidth + x;
+      const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+      const allocateFields = () => {
+        const count = simWidth * simHeight;
+        velocityX = new Float32Array(count);
+        velocityY = new Float32Array(count);
+        nextVelocityX = new Float32Array(count);
+        nextVelocityY = new Float32Array(count);
+        dyeR = new Float32Array(count);
+        dyeG = new Float32Array(count);
+        dyeB = new Float32Array(count);
+        nextDyeR = new Float32Array(count);
+        nextDyeG = new Float32Array(count);
+        nextDyeB = new Float32Array(count);
+        divergence = new Float32Array(count);
+        pressure = new Float32Array(count);
+        nextPressure = new Float32Array(count);
+        imageData = simContext?.createImageData(simWidth, simHeight);
+      };
+
+      const resize = () => {
+        dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+        canvas.width = Math.ceil(window.innerWidth * dpr);
+        canvas.height = Math.ceil(window.innerHeight * dpr);
+        context.setTransform(dpr, 0, 0, dpr, 0, 0);
+        context.imageSmoothingEnabled = true;
+
+        simWidth = Math.max(112, Math.round(window.innerWidth / 9));
+        simHeight = Math.max(72, Math.round(window.innerHeight / 9));
+        simCanvas.width = simWidth;
+        simCanvas.height = simHeight;
+        allocateFields();
+      };
+
+      const sampleBilinear = (field, x, y) => {
+        const x0 = clamp(Math.floor(x), 0, simWidth - 1);
+        const y0 = clamp(Math.floor(y), 0, simHeight - 1);
+        const x1 = clamp(x0 + 1, 0, simWidth - 1);
+        const y1 = clamp(y0 + 1, 0, simHeight - 1);
+        const tx = clamp(x - x0, 0, 1);
+        const ty = clamp(y - y0, 0, 1);
+        const a = field[indexOf(x0, y0)];
+        const b = field[indexOf(x1, y0)];
+        const c = field[indexOf(x0, y1)];
+        const d = field[indexOf(x1, y1)];
+
+        return a * (1 - tx) * (1 - ty) + b * tx * (1 - ty) + c * (1 - tx) * ty + d * tx * ty;
+      };
+
+      const advectField = (source, target, dt, dissipation) => {
+        for (let y = 0; y < simHeight; y += 1) {
+          for (let x = 0; x < simWidth; x += 1) {
+            const i = indexOf(x, y);
+            const backX = x - velocityX[i] * dt;
+            const backY = y - velocityY[i] * dt;
+            target[i] = sampleBilinear(source, backX, backY) * dissipation;
+          }
+        }
+      };
+
+      const injectForce = (clientX, clientY, deltaX, deltaY) => {
+        const centerX = (clientX / window.innerWidth) * simWidth;
+        const centerY = (clientY / window.innerHeight) * simHeight;
+        const radius = Math.max(6, Math.min(simWidth, simHeight) * forceRadius);
+        const forceX = (deltaX / window.innerWidth) * simWidth * 22;
+        const forceY = (deltaY / window.innerHeight) * simHeight * 22;
+
+        for (let y = Math.max(0, Math.floor(centerY - radius)); y <= Math.min(simHeight - 1, Math.ceil(centerY + radius)); y += 1) {
+          for (let x = Math.max(0, Math.floor(centerX - radius)); x <= Math.min(simWidth - 1, Math.ceil(centerX + radius)); x += 1) {
+            const dx = (x - centerX) / radius;
+            const dy = (y - centerY) / radius;
+            const falloff = Math.exp(-(dx * dx + dy * dy) * 2.8);
+            const i = indexOf(x, y);
+            velocityX[i] += forceX * falloff;
+            velocityY[i] += forceY * falloff;
+          }
+        }
+      };
+
+      const injectDye = (clientX, clientY, strength = 1) => {
+        const centerX = (clientX / window.innerWidth) * simWidth;
+        const centerY = (clientY / window.innerHeight) * simHeight;
+        const radius = Math.max(7, Math.min(simWidth, simHeight) * dyeRadius);
+
+        for (let y = Math.max(0, Math.floor(centerY - radius)); y <= Math.min(simHeight - 1, Math.ceil(centerY + radius)); y += 1) {
+          for (let x = Math.max(0, Math.floor(centerX - radius)); x <= Math.min(simWidth - 1, Math.ceil(centerX + radius)); x += 1) {
+            const dx = (x - centerX) / radius;
+            const dy = (y - centerY) / radius;
+            const falloff = Math.exp(-(dx * dx + dy * dy) * 2.4) * strength;
+            const i = indexOf(x, y);
+            dyeR[i] = Math.min(1, dyeR[i] + 0.08 * falloff);
+            dyeG[i] = Math.min(1, dyeG[i] + 0.2 * falloff);
+            dyeB[i] = Math.min(1, dyeB[i] + 0.54 * falloff);
+          }
+        }
+      };
+
+      const projectVelocity = () => {
+        divergence.fill(0);
+        pressure.fill(0);
+
+        for (let y = 1; y < simHeight - 1; y += 1) {
+          for (let x = 1; x < simWidth - 1; x += 1) {
+            const i = indexOf(x, y);
+            divergence[i] =
+              (velocityX[indexOf(x + 1, y)] - velocityX[indexOf(x - 1, y)] +
+                velocityY[indexOf(x, y + 1)] - velocityY[indexOf(x, y - 1)]) *
+              0.5;
+          }
+        }
+
+        for (let step = 0; step < pressureIterations; step += 1) {
+          for (let y = 1; y < simHeight - 1; y += 1) {
+            for (let x = 1; x < simWidth - 1; x += 1) {
+              const i = indexOf(x, y);
+              nextPressure[i] =
+                (pressure[indexOf(x - 1, y)] +
+                  pressure[indexOf(x + 1, y)] +
+                  pressure[indexOf(x, y - 1)] +
+                  pressure[indexOf(x, y + 1)] -
+                  divergence[i]) *
+                0.25;
+            }
+          }
+
+          [pressure, nextPressure] = [nextPressure, pressure];
+        }
+
+        for (let y = 1; y < simHeight - 1; y += 1) {
+          for (let x = 1; x < simWidth - 1; x += 1) {
+            const i = indexOf(x, y);
+            velocityX[i] -= (pressure[indexOf(x + 1, y)] - pressure[indexOf(x - 1, y)]) * 0.5;
+            velocityY[i] -= (pressure[indexOf(x, y + 1)] - pressure[indexOf(x, y - 1)]) * 0.5;
+          }
+        }
+      };
+
+      const renderFluid = () => {
+        if (!simContext || !imageData) return;
+
+        const pixels = imageData.data;
+        for (let i = 0; i < dyeR.length; i += 1) {
+          const p = i * 4;
+          const density = Math.max(dyeR[i], dyeG[i], dyeB[i]);
+          pixels[p] = Math.min(255, dyeR[i] * 255);
+          pixels[p + 1] = Math.min(255, dyeG[i] * 255);
+          pixels[p + 2] = Math.min(255, dyeB[i] * 255);
+          pixels[p + 3] = Math.min(210, density * 220);
+        }
+
+        simContext.putImageData(imageData, 0, 0);
+        context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        context.drawImage(simCanvas, 0, 0, window.innerWidth, window.innerHeight);
+      };
+
+      const stepFluid = () => {
+        advectField(velocityX, nextVelocityX, 0.92, velocityDissipation);
+        advectField(velocityY, nextVelocityY, 0.92, velocityDissipation);
+        [velocityX, nextVelocityX] = [nextVelocityX, velocityX];
+        [velocityY, nextVelocityY] = [nextVelocityY, velocityY];
+
+        projectVelocity();
+
+        advectField(dyeR, nextDyeR, 0.72, dyeDissipation);
+        advectField(dyeG, nextDyeG, 0.72, dyeDissipation);
+        advectField(dyeB, nextDyeB, 0.72, dyeDissipation);
+        [dyeR, nextDyeR] = [nextDyeR, dyeR];
+        [dyeG, nextDyeG] = [nextDyeG, dyeG];
+        [dyeB, nextDyeB] = [nextDyeB, dyeB];
+
+        renderFluid();
+      };
+
+      const animate = () => {
+        stepFluid();
+        idleTicks += 1;
+
+        if (idleTicks < 180) {
+          frame = window.requestAnimationFrame(animate);
+        } else {
+          frame = 0;
+        }
+      };
+
+      const startSimulation = () => {
+        idleTicks = 0;
+        if (!frame) {
+          frame = window.requestAnimationFrame(animate);
+        }
+      };
+
+      const handlePointerMove = (event) => {
+        const points = typeof event.getCoalescedEvents === "function" ? event.getCoalescedEvents() : [event];
+
+        for (const point of points) {
+          if (!pointer.active) {
+            pointer.active = true;
+            pointer.x = point.clientX;
+            pointer.y = point.clientY;
+            injectDye(point.clientX, point.clientY, 0.8);
+            continue;
+          }
+
+          const deltaX = point.clientX - pointer.x;
+          const deltaY = point.clientY - pointer.y;
+          const distance = Math.hypot(deltaX, deltaY);
+
+          if (distance > 1) {
+            injectForce(point.clientX, point.clientY, deltaX, deltaY);
+            injectDye(point.clientX, point.clientY, Math.min(1.2, 0.55 + distance / 80));
+            pointer.x = point.clientX;
+            pointer.y = point.clientY;
+          }
+        }
+
+        startSimulation();
+      };
+
+      resize();
+      window.addEventListener("resize", resize);
+      window.addEventListener("pointermove", handlePointerMove, { passive: true });
+      window.addEventListener("pagehide", () => window.cancelAnimationFrame(frame), { once: true });
+    }
+  }
+</script>

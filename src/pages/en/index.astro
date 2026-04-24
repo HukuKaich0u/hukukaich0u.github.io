@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import InkTrailBackground from "../../components/InkTrailBackground.astro";
 import ProfileCard from "../../components/ProfileCard.astro";
 import TimelineToggleSection from "../../components/TimelineToggleSection.astro";
 import { getMomentEntries } from "../../data/moments";
@@ -16,6 +17,7 @@ const momentEntries = getMomentEntries("en");
   title="Home | Koki Aoyagi"
   description="Profile"
 >
+  <InkTrailBackground />
   <section class="stack-lg">
     <p class="recent-update"><span class="recent-update-label">Recent Update:</span> 2026 March</p>
 
