@@ -48,6 +48,7 @@
       const pressureIterations = 10;
       const forceRadius = 0.035;
       const dyeRadius = 0.045;
+      const dyeGain = 0.42;
       let dpr = 1;
       let simWidth = 1;
       let simHeight = 1;
@@ -159,9 +160,9 @@
             const dy = (y - centerY) / radius;
             const falloff = Math.exp(-(dx * dx + dy * dy) * 2.4) * strength;
             const i = indexOf(x, y);
-            dyeR[i] = Math.min(1, dyeR[i] + 0.08 * falloff);
-            dyeG[i] = Math.min(1, dyeG[i] + 0.2 * falloff);
-            dyeB[i] = Math.min(1, dyeB[i] + 0.54 * falloff);
+            dyeR[i] = Math.min(1, dyeR[i] + 0.08 * dyeGain * falloff);
+            dyeG[i] = Math.min(1, dyeG[i] + 0.2 * dyeGain * falloff);
+            dyeB[i] = Math.min(1, dyeB[i] + 0.54 * dyeGain * falloff);
           }
         }
       };
@@ -268,7 +269,7 @@
             pointer.active = true;
             pointer.x = point.clientX;
             pointer.y = point.clientY;
-            injectDye(point.clientX, point.clientY, 0.8);
+            injectDye(point.clientX, point.clientY, 0.34);
             continue;
           }
 
@@ -278,7 +279,7 @@
 
           if (distance > 1) {
             injectForce(point.clientX, point.clientY, deltaX, deltaY);
-            injectDye(point.clientX, point.clientY, Math.min(1.2, 0.55 + distance / 80));
+            injectDye(point.clientX, point.clientY, Math.min(0.58, 0.28 + distance / 130));
             pointer.x = point.clientX;
             pointer.y = point.clientY;
           }

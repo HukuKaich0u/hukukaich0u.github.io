@@ -41,6 +41,16 @@ test("ink trail injects dye and pointer force separately", async () => {
   assert.match(component, /dyeRadius/);
 });
 
+test("ink trail keeps dye amount restrained while preserving blue color balance", async () => {
+  const component = await readComponent();
+
+  assert.match(component, /const dyeGain = 0\.42/);
+  assert.match(component, /0\.08 \* dyeGain \* falloff/);
+  assert.match(component, /0\.2 \* dyeGain \* falloff/);
+  assert.match(component, /0\.54 \* dyeGain \* falloff/);
+  assert.match(component, /Math\.min\(0\.58, 0\.28 \+ distance \/ 130\)/);
+});
+
 test("ink trail simulates water-like motion instead of stamping brush images", async () => {
   const component = await readComponent();
 
