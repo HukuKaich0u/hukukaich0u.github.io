@@ -32,6 +32,14 @@ test("ink trail uses a low-resolution fluid field inspired by stable fluids", as
   assert.match(component, /advectField/);
 });
 
+test("ink trail dampens velocity quickly to avoid slippery motion", async () => {
+  const component = await readComponent();
+
+  assert.match(component, /const velocityDissipation = 0\.92/);
+  assert.match(component, /advectField\(velocityX, nextVelocityX, 0\.62, velocityDissipation\)/);
+  assert.match(component, /advectField\(velocityY, nextVelocityY, 0\.62, velocityDissipation\)/);
+});
+
 test("ink trail injects dye and pointer force separately", async () => {
   const component = await readComponent();
 
@@ -49,6 +57,26 @@ test("ink trail keeps dye amount restrained while preserving blue color balance"
   assert.match(component, /0\.2 \* dyeGain \* falloff/);
   assert.match(component, /0\.54 \* dyeGain \* falloff/);
   assert.match(component, /Math\.min\(0\.58, 0\.28 \+ distance \/ 130\)/);
+});
+
+test("ink trail limits diffusion and adds dry ink grain", async () => {
+  const component = await readComponent();
+
+  assert.match(component, /const forceScale = 10/);
+  assert.match(component, /const dyeRadius = 0\.032/);
+  assert.match(component, /const renderAlphaScale = 185/);
+  assert.match(component, /const dryGrain/);
+  assert.match(component, /paperGrain/);
+  assert.match(component, /advectField\(dyeR, nextDyeR, 0\.38, dyeDissipation\)/);
+});
+
+test("ink trail darkens blue ink as density builds up", async () => {
+  const component = await readComponent();
+
+  assert.match(component, /const saturation = Math\.min\(1, density \* 1\.85\)/);
+  assert.match(component, /const paleInk = \{ r: 122, g: 154, b: 238 \}/);
+  assert.match(component, /const denseInk = \{ r: 58, g: 78, b: 207 \}/);
+  assert.match(component, /pixels\[p \+ 2\] = paleInk\.b \* \(1 - saturation\) \+ denseInk\.b \* saturation/);
 });
 
 test("ink trail simulates water-like motion instead of stamping brush images", async () => {
