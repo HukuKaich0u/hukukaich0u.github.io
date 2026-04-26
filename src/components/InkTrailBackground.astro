@@ -44,7 +44,7 @@
       const simContext = simCanvas.getContext("2d", { alpha: true });
       const pointer = { x: 0, y: 0, active: false };
       const velocityDissipation = 0.92;
-      const dyeDissipation = 0.9996;
+      const dyeDissipation = 0.9998;
       const pressureIterations = 10;
       const forceRadius = 0.035;
       const dyeRadius = 0.032;
@@ -73,11 +73,6 @@
 
       const indexOf = (x, y) => y * simWidth + x;
       const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-      const paperGrain = (x, y) => {
-        const noise = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
-        return noise - Math.floor(noise);
-      };
-
       const allocateFields = () => {
         const count = simWidth * simHeight;
         velocityX = new Float32Array(count);
@@ -97,14 +92,14 @@
       };
 
       const resize = () => {
-        dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+        dpr = Math.min(window.devicePixelRatio || 1, 1.5);
         canvas.width = Math.ceil(window.innerWidth * dpr);
         canvas.height = Math.ceil(window.innerHeight * dpr);
         context.setTransform(dpr, 0, 0, dpr, 0, 0);
         context.imageSmoothingEnabled = true;
 
-        simWidth = Math.max(112, Math.round(window.innerWidth / 9));
-        simHeight = Math.max(72, Math.round(window.innerHeight / 9));
+        simWidth = Math.max(180, Math.round(window.innerWidth / 5));
+        simHeight = Math.max(112, Math.round(window.innerHeight / 5));
         simCanvas.width = simWidth;
         simCanvas.height = simHeight;
         allocateFields();
@@ -220,16 +215,13 @@
         for (let i = 0; i < dyeR.length; i += 1) {
           const p = i * 4;
           const density = Math.max(dyeR[i], dyeG[i], dyeB[i]);
-          const x = i % simWidth;
-          const y = Math.floor(i / simWidth);
-          const dryGrain = 0.82 + paperGrain(x, y) * 0.24;
           const saturation = Math.min(1, density * 1.85);
-          const paleInk = { r: 122, g: 154, b: 238 };
-          const denseInk = { r: 58, g: 78, b: 207 };
+          const paleInk = { r: 20, g: 9, b: 255 };
+          const denseInk = { r: 8, g: 4, b: 138 };
           pixels[p] = paleInk.r * (1 - saturation) + denseInk.r * saturation;
           pixels[p + 1] = paleInk.g * (1 - saturation) + denseInk.g * saturation;
           pixels[p + 2] = paleInk.b * (1 - saturation) + denseInk.b * saturation;
-          pixels[p + 3] = Math.min(190, density * renderAlphaScale * dryGrain);
+          pixels[p + 3] = Math.min(190, density * renderAlphaScale);
         }
 
         simContext.putImageData(imageData, 0, 0);

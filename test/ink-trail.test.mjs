@@ -53,6 +53,7 @@ test("ink trail keeps dye amount restrained while preserving blue color balance"
   const component = await readComponent();
 
   assert.match(component, /const dyeGain = 0\.42/);
+  assert.match(component, /const dyeDissipation = 0\.9998/);
   assert.match(component, /0\.08 \* dyeGain \* falloff/);
   assert.match(component, /0\.2 \* dyeGain \* falloff/);
   assert.match(component, /0\.54 \* dyeGain \* falloff/);
@@ -65,8 +66,9 @@ test("ink trail limits diffusion and adds dry ink grain", async () => {
   assert.match(component, /const forceScale = 10/);
   assert.match(component, /const dyeRadius = 0\.032/);
   assert.match(component, /const renderAlphaScale = 185/);
-  assert.match(component, /const dryGrain/);
-  assert.match(component, /paperGrain/);
+  assert.match(component, /Math\.round\(window\.innerWidth \/ 5\)/);
+  assert.match(component, /Math\.round\(window\.innerHeight \/ 5\)/);
+  assert.doesNotMatch(component, /const dryGrain/);
   assert.match(component, /advectField\(dyeR, nextDyeR, 0\.38, dyeDissipation\)/);
 });
 
@@ -74,8 +76,8 @@ test("ink trail darkens blue ink as density builds up", async () => {
   const component = await readComponent();
 
   assert.match(component, /const saturation = Math\.min\(1, density \* 1\.85\)/);
-  assert.match(component, /const paleInk = \{ r: 122, g: 154, b: 238 \}/);
-  assert.match(component, /const denseInk = \{ r: 58, g: 78, b: 207 \}/);
+  assert.match(component, /const paleInk = \{ r: 20, g: 9, b: 255 \}/);
+  assert.match(component, /const denseInk = \{ r: 8, g: 4, b: 138 \}/);
   assert.match(component, /pixels\[p \+ 2\] = paleInk\.b \* \(1 - saturation\) \+ denseInk\.b \* saturation/);
 });
 
