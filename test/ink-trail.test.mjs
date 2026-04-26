@@ -4,6 +4,8 @@ import test from "node:test";
 
 const readComponent = () =>
   readFile(new URL("../src/components/InkTrailBackground.astro", import.meta.url), "utf8");
+const readLayout = () =>
+  readFile(new URL("../src/layouts/BaseLayout.astro", import.meta.url), "utf8");
 
 test("home pages render the ink trail background", async () => {
   const jaPage = await readFile(new URL("../src/pages/index.astro", import.meta.url), "utf8");
@@ -13,12 +15,25 @@ test("home pages render the ink trail background", async () => {
   assert.match(enPage, /InkTrailBackground/);
 });
 
+test("layout includes an ink toggle button next to theme toggle", async () => {
+  const layout = await readLayout();
+
+  assert.match(layout, /id="ink-toggle"/);
+  assert.match(layout, /copy\.inkToggleLabel/);
+  assert.doesNotMatch(layout, /id="ink-reset"/);
+  assert.doesNotMatch(layout, /id="ink-controls"/);
+});
+
 test("ink trail background is passive and motion-aware", async () => {
   const component = await readComponent();
 
   assert.match(component, /pointer-events:\s*none/);
+  assert.match(component, /mix-blend-mode:\s*screen/);
+  assert.doesNotMatch(component, /mix-blend-mode:\s*multiply/);
   assert.match(component, /prefers-reduced-motion:\s*reduce/);
   assert.match(component, /requestAnimationFrame/);
+  assert.match(component, /ink-trail:toggle/);
+  assert.doesNotMatch(component, /ink-trail:reset/);
 });
 
 test("ink trail uses a low-resolution fluid field inspired by stable fluids", async () => {
@@ -76,8 +91,9 @@ test("ink trail darkens blue ink as density builds up", async () => {
   const component = await readComponent();
 
   assert.match(component, /const saturation = Math\.min\(1, density \* 1\.85\)/);
-  assert.match(component, /const paleInk = \{ r: 20, g: 9, b: 255 \}/);
-  assert.match(component, /const denseInk = \{ r: 8, g: 4, b: 138 \}/);
+  assert.match(component, /const isDarkTheme = document\.documentElement\.dataset\.theme === "dark"/);
+  assert.match(component, /const paleInk = isDarkTheme \? \{ r: 87, g: 188, b: 255 \} : \{ r: 72, g: 176, b: 255 \}/);
+  assert.match(component, /const denseInk = isDarkTheme \? \{ r: 25, g: 120, b: 235 \} : \{ r: 18, g: 110, b: 225 \}/);
   assert.match(component, /pixels\[p \+ 2\] = paleInk\.b \* \(1 - saturation\) \+ denseInk\.b \* saturation/);
 });
 

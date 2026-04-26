@@ -147,7 +147,7 @@ a:hover {
 .header-controls {
   display: flex;
   align-items: center;
-  gap: 0;
+  gap: 0.45rem;
 }
 
 .lang-switch {
@@ -169,6 +169,22 @@ a:hover {
   display: flex;
   align-items: center;
   gap: 0.4rem;
+}
+
+:root[data-ink-enabled="on"] .ink-icon-off {
+  display: none;
+}
+
+:root[data-ink-enabled="off"] .ink-icon-on {
+  display: none;
+}
+
+:root[data-ink-enabled="off"] .ink-icon-off {
+  display: inline-flex;
+}
+
+:root[data-ink-enabled="off"] .ink-toggle {
+  color: var(--text-subtitle);
 }
 
 .theme-toggle {
@@ -220,6 +236,21 @@ a:hover {
 .main-content {
   flex: 1;
   padding: 1.5rem 0 2rem;
+}
+
+@media (max-width: 640px) {
+  .nav {
+    gap: 0.55rem;
+  }
+
+  .brand {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .header-controls {
+    margin-left: auto;
+  }
 }
 
 .site-footer {

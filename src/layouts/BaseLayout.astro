@@ -40,16 +40,19 @@ const repositoryUrl = "https://github.com/hukukaich0u/hukukaich0u.github.io";
     <script is:inline>
       (() => {
         const key = "theme-preference";
+        const inkKey = "ink-trail-enabled";
         const media = window.matchMedia("(prefers-color-scheme: dark)");
         const readMode = () => {
           const stored = localStorage.getItem(key);
           return stored === "light" || stored === "dark" ? stored : "system";
         };
+        const readInkMode = () => (localStorage.getItem(inkKey) === "off" ? "off" : "on");
         const resolveTheme = (mode) =>
           mode === "dark" || (mode === "system" && media.matches) ? "dark" : "light";
         const mode = readMode();
         document.documentElement.dataset.theme = resolveTheme(mode);
         document.documentElement.dataset.themeMode = mode;
+        document.documentElement.dataset.inkEnabled = readInkMode();
       })();
     </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -73,20 +76,35 @@ const repositoryUrl = "https://github.com/hukukaich0u/hukukaich0u.github.io";
           <a href={toLocalePath("en")} class={lang === "en" ? "active" : undefined}>English</a>
           <span>)</span>
         </div>
-        <div class="theme-switch">
+        <div class="header-controls">
           <button
-            id="theme-toggle"
+            id="ink-toggle"
             type="button"
-            class="theme-toggle"
-            aria-label={copy.themeToggleLabel}
+            class="theme-toggle ink-toggle"
+            aria-label={copy.inkToggleLabel}
           >
-            <span class="theme-icon theme-sun" aria-hidden="true">
-              <Icon name="lucide:sun" />
+            <span class="theme-icon ink-icon-on" aria-hidden="true">
+              <Icon name="lucide:droplets" />
             </span>
-            <span class="theme-icon theme-moon" aria-hidden="true">
-              <Icon name="lucide:moon" />
+            <span class="theme-icon ink-icon-off" aria-hidden="true">
+              <Icon name="lucide:droplet-off" />
             </span>
           </button>
+          <div class="theme-switch">
+            <button
+              id="theme-toggle"
+              type="button"
+              class="theme-toggle"
+              aria-label={copy.themeToggleLabel}
+            >
+              <span class="theme-icon theme-sun" aria-hidden="true">
+                <Icon name="lucide:sun" />
+              </span>
+              <span class="theme-icon theme-moon" aria-hidden="true">
+                <Icon name="lucide:moon" />
+              </span>
+            </button>
+          </div>
         </div>
       </nav>
     </header>
@@ -99,6 +117,8 @@ const repositoryUrl = "https://github.com/hukukaich0u/hukukaich0u.github.io";
         const key = "theme-preference";
         const button = document.querySelector("#theme-toggle");
         const media = window.matchMedia("(prefers-color-scheme: dark)");
+        const inkKey = "ink-trail-enabled";
+        const inkToggle = document.querySelector("#ink-toggle");
 
         if (!(button instanceof HTMLButtonElement)) return;
 
@@ -133,6 +153,27 @@ const repositoryUrl = "https://github.com/hukukaich0u/hukukaich0u.github.io";
             apply("system");
           }
         });
+
+        if (inkToggle instanceof HTMLButtonElement) {
+          const readInkEnabled = () => localStorage.getItem(inkKey) !== "off";
+          const syncInkButton = (enabled) => {
+            document.documentElement.dataset.inkEnabled = enabled ? "on" : "off";
+          };
+          const writeInkEnabled = (enabled) => {
+            localStorage.setItem(inkKey, enabled ? "on" : "off");
+            syncInkButton(enabled);
+            document.dispatchEvent(
+              new CustomEvent("ink-trail:toggle", {
+                detail: { enabled }
+              })
+            );
+          };
+
+          syncInkButton(readInkEnabled());
+          inkToggle.addEventListener("click", () => {
+            writeInkEnabled(!readInkEnabled());
+          });
+        }
       })();
     </script>
   </body>

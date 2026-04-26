@@ -9,7 +9,7 @@
     height: 100vh;
     pointer-events: none;
     opacity: 0.76;
-    mix-blend-mode: multiply;
+    mix-blend-mode: screen;
   }
 
   :global(:root[data-theme="dark"]) .ink-trail-background {
@@ -38,6 +38,7 @@
     const context = canvas.getContext("2d", { alpha: true });
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const coarsePointer = window.matchMedia("(pointer: coarse)");
+    const inkPreferenceKey = "ink-trail-enabled";
 
     if (context && !motion.matches && !coarsePointer.matches) {
       const simCanvas = document.createElement("canvas");
@@ -70,9 +71,25 @@
       let divergence;
       let pressure;
       let nextPressure;
+      let inkEnabled = localStorage.getItem(inkPreferenceKey) !== "off";
 
       const indexOf = (x, y) => y * simWidth + x;
       const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+      const clearFields = () => {
+        velocityX?.fill(0);
+        velocityY?.fill(0);
+        nextVelocityX?.fill(0);
+        nextVelocityY?.fill(0);
+        dyeR?.fill(0);
+        dyeG?.fill(0);
+        dyeB?.fill(0);
+        nextDyeR?.fill(0);
+        nextDyeG?.fill(0);
+        nextDyeB?.fill(0);
+        divergence?.fill(0);
+        pressure?.fill(0);
+        nextPressure?.fill(0);
+      };
       const allocateFields = () => {
         const count = simWidth * simHeight;
         velocityX = new Float32Array(count);
@@ -103,6 +120,23 @@
         simCanvas.width = simWidth;
         simCanvas.height = simHeight;
         allocateFields();
+      };
+
+      const applyInkEnabled = (enabled) => {
+        inkEnabled = enabled;
+        canvas.style.visibility = inkEnabled ? "visible" : "hidden";
+
+        if (!inkEnabled) {
+          clearFields();
+          pointer.active = false;
+          idleTicks = 180;
+          if (frame) {
+            window.cancelAnimationFrame(frame);
+            frame = 0;
+          }
+          context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+          simContext?.clearRect(0, 0, simWidth, simHeight);
+        }
       };
 
       const sampleBilinear = (field, x, y) => {
@@ -212,12 +246,13 @@
         if (!simContext || !imageData) return;
 
         const pixels = imageData.data;
+        const isDarkTheme = document.documentElement.dataset.theme === "dark";
         for (let i = 0; i < dyeR.length; i += 1) {
           const p = i * 4;
           const density = Math.max(dyeR[i], dyeG[i], dyeB[i]);
           const saturation = Math.min(1, density * 1.85);
-          const paleInk = { r: 20, g: 9, b: 255 };
-          const denseInk = { r: 8, g: 4, b: 138 };
+          const paleInk = isDarkTheme ? { r: 87, g: 188, b: 255 } : { r: 72, g: 176, b: 255 };
+          const denseInk = isDarkTheme ? { r: 25, g: 120, b: 235 } : { r: 18, g: 110, b: 225 };
           pixels[p] = paleInk.r * (1 - saturation) + denseInk.r * saturation;
           pixels[p + 1] = paleInk.g * (1 - saturation) + denseInk.g * saturation;
           pixels[p + 2] = paleInk.b * (1 - saturation) + denseInk.b * saturation;
@@ -259,6 +294,7 @@
       };
 
       const startSimulation = () => {
+        if (!inkEnabled) return;
         idleTicks = 0;
         if (!frame) {
           frame = window.requestAnimationFrame(animate);
@@ -266,6 +302,7 @@
       };
 
       const handlePointerMove = (event) => {
+        if (!inkEnabled) return;
         const points = typeof event.getCoalescedEvents === "function" ? event.getCoalescedEvents() : [event];
 
         for (const point of points) {
@@ -293,8 +330,12 @@
       };
 
       resize();
+      applyInkEnabled(inkEnabled);
       window.addEventListener("resize", resize);
       window.addEventListener("pointermove", handlePointerMove, { passive: true });
+      document.addEventListener("ink-trail:toggle", (event) => {
+        applyInkEnabled(Boolean(event.detail?.enabled));
+      });
       window.addEventListener("pagehide", () => window.cancelAnimationFrame(frame), { once: true });
     }
   }
