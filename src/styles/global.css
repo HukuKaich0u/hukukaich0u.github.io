@@ -511,6 +511,7 @@ a:hover {
   width: 1px;
   background: color-mix(in srgb, var(--line) 78%, transparent);
   transform: translateX(-50%);
+  z-index: 0;
 }
 
 .toggle-section-timeline .history-period::before {
@@ -521,9 +522,10 @@ a:hover {
   width: 0.56rem;
   height: 0.56rem;
   border-radius: 999px;
-  background: var(--surface);
+  background: var(--link);
   border: 1.5px solid var(--link);
   transform: translateX(-50%);
+  z-index: 1;
 }
 
 .toggle-section-timeline .history-item:last-child .history-period::after {
