@@ -491,27 +491,35 @@ a:hover {
   margin-top: 0.9rem;
 }
 
+.toggle-section-timeline .history-list {
+  position: relative;
+  --timeline-axis-x: calc(148px - 0.16rem);
+  --timeline-rail-start: 0.52rem;
+  --timeline-rail-end: 0.52rem;
+}
+
+.toggle-section-timeline .history-list::before {
+  content: "";
+  position: absolute;
+  top: var(--timeline-rail-start);
+  bottom: var(--timeline-rail-end);
+  left: var(--timeline-axis-x);
+  width: 1px;
+  background: color-mix(in srgb, var(--line) 78%, transparent);
+  transform: translateX(-50%);
+}
+
 .toggle-section-timeline .history-item {
   grid-template-columns: 148px minmax(0, 1fr);
   column-gap: 1.7rem;
+  position: relative;
+  z-index: 1;
 }
 
 .toggle-section-timeline .history-period {
   position: relative;
+  align-self: start;
   padding-right: 1.2rem;
-  --timeline-axis-x: calc(100% - 0.16rem);
-}
-
-.toggle-section-timeline .history-period::after {
-  content: "";
-  position: absolute;
-  top: 0.58rem;
-  left: var(--timeline-axis-x);
-  bottom: -1.1rem;
-  width: 1px;
-  background: color-mix(in srgb, var(--line) 78%, transparent);
-  transform: translateX(-50%);
-  z-index: 0;
 }
 
 .toggle-section-timeline .history-period::before {
@@ -526,10 +534,6 @@ a:hover {
   border: 1.5px solid var(--link);
   transform: translateX(-50%);
   z-index: 1;
-}
-
-.toggle-section-timeline .history-item:last-child .history-period::after {
-  bottom: 0.35rem;
 }
 
 .history-list {
@@ -640,6 +644,10 @@ a:hover {
     grid-template-columns: 132px minmax(0, 1fr);
     column-gap: 1.15rem;
   }
+
+  .toggle-section-timeline .history-list {
+    --timeline-axis-x: calc(132px - 0.16rem);
+  }
 }
 
 @media (max-width: 640px) {
@@ -739,29 +747,24 @@ a:hover {
     grid-template-columns: 1fr;
   }
 
+  .toggle-section-timeline .history-list {
+    --timeline-axis-x: 0.22rem;
+    --timeline-rail-start: 0.42rem;
+    --timeline-rail-end: 0.42rem;
+  }
+
   .toggle-section-timeline .history-period {
     padding-right: 0;
     padding-left: 1rem;
-    --timeline-axis-x: 0.22rem;
   }
 
   .toggle-section-timeline .history-main {
     padding-left: 1rem;
   }
 
-  .toggle-section-timeline .history-period::after {
-    left: var(--timeline-axis-x);
-    top: 0.48rem;
-    bottom: -0.7rem;
-  }
-
   .toggle-section-timeline .history-period::before {
     left: var(--timeline-axis-x);
     top: 0.14rem;
-  }
-
-  .toggle-section-timeline .history-item:last-child .history-period::after {
-    bottom: 0.1rem;
   }
 
   .footer-handle {
