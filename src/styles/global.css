@@ -589,7 +589,7 @@ a:hover {
   display: block;
   width: min(100%, 420px);
   height: auto;
-  margin-top: 0.7rem;
+  margin: 0.7rem auto 0;
   border-radius: 12px;
 }
 
