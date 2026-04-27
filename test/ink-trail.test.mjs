@@ -31,6 +31,7 @@ test("ink trail background is passive and motion-aware", async () => {
   assert.match(component, /mix-blend-mode:\s*screen/);
   assert.doesNotMatch(component, /mix-blend-mode:\s*multiply/);
   assert.match(component, /prefers-reduced-motion:\s*reduce/);
+  assert.doesNotMatch(component, /pointer:\s*coarse/);
   assert.match(component, /requestAnimationFrame/);
   assert.match(component, /ink-trail:toggle/);
   assert.doesNotMatch(component, /ink-trail:reset/);
@@ -62,6 +63,9 @@ test("ink trail injects dye and pointer force separately", async () => {
   assert.match(component, /injectForce/);
   assert.match(component, /forceRadius/);
   assert.match(component, /dyeRadius/);
+  assert.match(component, /window\.addEventListener\("pointerdown", handlePointerDown/);
+  assert.match(component, /window\.addEventListener\("pointerup", handlePointerEnd/);
+  assert.match(component, /window\.addEventListener\("pointercancel", handlePointerEnd/);
 });
 
 test("ink trail keeps dye amount restrained while preserving blue color balance", async () => {
@@ -104,6 +108,8 @@ test("ink trail simulates water-like motion instead of stamping brush images", a
   assert.match(component, /velocityDissipation/);
   assert.match(component, /dyeDissipation/);
   assert.match(component, /sampleBilinear/);
+  assert.match(component, /event\.pointerType === "touch"/);
+  assert.match(component, /pointer\.pointerId !== event\.pointerId/);
   assert.doesNotMatch(component, /createWatercolorBrush/);
   assert.doesNotMatch(component, /drawWatercolorDab/);
 });

@@ -24,7 +24,7 @@
     z-index: 1;
   }
 
-  @media (prefers-reduced-motion: reduce), (pointer: coarse) {
+  @media (prefers-reduced-motion: reduce) {
     .ink-trail-background {
       display: none;
     }
@@ -37,13 +37,12 @@
   if (canvas instanceof HTMLCanvasElement) {
     const context = canvas.getContext("2d", { alpha: true });
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const coarsePointer = window.matchMedia("(pointer: coarse)");
     const inkPreferenceKey = "ink-trail-enabled";
 
-    if (context && !motion.matches && !coarsePointer.matches) {
+    if (context && !motion.matches) {
       const simCanvas = document.createElement("canvas");
       const simContext = simCanvas.getContext("2d", { alpha: true });
-      const pointer = { x: 0, y: 0, active: false };
+      const pointer = { x: 0, y: 0, active: false, pointerId: -1, pointerType: "mouse" };
       const velocityDissipation = 0.92;
       const dyeDissipation = 0.9998;
       const pressureIterations = 10;
@@ -301,18 +300,40 @@
         }
       };
 
+      const resetPointer = () => {
+        pointer.active = false;
+        pointer.pointerId = -1;
+        pointer.pointerType = "mouse";
+      };
+
+      const beginPointer = (point) => {
+        pointer.active = true;
+        pointer.x = point.clientX;
+        pointer.y = point.clientY;
+        pointer.pointerId = point.pointerId;
+        pointer.pointerType = point.pointerType || "mouse";
+      };
+
+      const handlePointerDown = (event) => {
+        if (!inkEnabled || !event.isPrimary) return;
+        beginPointer(event);
+        injectDye(event.clientX, event.clientY, event.pointerType === "touch" ? 0.48 : 0.34);
+        startSimulation();
+      };
+
       const handlePointerMove = (event) => {
         if (!inkEnabled) return;
+        if (event.pointerType === "touch" && (!pointer.active || pointer.pointerId !== event.pointerId)) return;
         const points = typeof event.getCoalescedEvents === "function" ? event.getCoalescedEvents() : [event];
 
         for (const point of points) {
           if (!pointer.active) {
-            pointer.active = true;
-            pointer.x = point.clientX;
-            pointer.y = point.clientY;
+            beginPointer(point);
             injectDye(point.clientX, point.clientY, 0.34);
             continue;
           }
+
+          if (point.pointerType === "touch" && pointer.pointerId !== point.pointerId) continue;
 
           const deltaX = point.clientX - pointer.x;
           const deltaY = point.clientY - pointer.y;
@@ -329,10 +350,18 @@
         startSimulation();
       };
 
+      const handlePointerEnd = (event) => {
+        if (event.pointerId !== pointer.pointerId) return;
+        resetPointer();
+      };
+
       resize();
       applyInkEnabled(inkEnabled);
       window.addEventListener("resize", resize);
+      window.addEventListener("pointerdown", handlePointerDown, { passive: true });
       window.addEventListener("pointermove", handlePointerMove, { passive: true });
+      window.addEventListener("pointerup", handlePointerEnd, { passive: true });
+      window.addEventListener("pointercancel", handlePointerEnd, { passive: true });
       document.addEventListener("ink-trail:toggle", (event) => {
         applyInkEnabled(Boolean(event.detail?.enabled));
       });
