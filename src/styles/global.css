@@ -745,13 +745,13 @@ a:hover {
 
   .toggle-section-timeline .history-period::after {
     left: var(--timeline-axis-x);
-    top: 0.1rem;
+    top: 0.48rem;
     bottom: -0.7rem;
   }
 
   .toggle-section-timeline .history-period::before {
-    left: calc(var(--timeline-axis-x) - 0.28rem);
-    top: 0.2rem;
+    left: var(--timeline-axis-x);
+    top: 0.14rem;
   }
 
   .toggle-section-timeline .history-item:last-child .history-period::after {
