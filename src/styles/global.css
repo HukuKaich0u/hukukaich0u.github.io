@@ -1,18 +1,18 @@
 :root {
-  --bg: linear-gradient(180deg, #ffffff 0%, #edf7ff 40%, #c2e5ff 100%);
+  --bg: linear-gradient(180deg, #ffffff 0%, #ffffff 58%, #e9f4fc 100%);
   --surface: #ffffff;
-  --header-bg: rgba(255, 255, 255, 0.82);
-  --bg-accent: rgba(17, 74, 138, 0.045);
+  --header-bg: rgba(255, 255, 255, 0.9);
+  --bg-accent: rgba(17, 74, 138, 0.02);
   --text: #2c3138;
   --text-title: #121418;
   --text-subtitle: #5a616b;
   --muted: #5a616b;
-  --line: #b8d2ee;
+  --line: #d2dce6;
   --link: #114a8a;
   --link-hover: #0a2f57;
-  --active-bg: #e9f3ff;
+  --active-bg: #fbfcfe;
   --theme-hover-border: #0a2f57;
-  --theme-hover-bg: #f3f8ff;
+  --theme-hover-bg: #fdfefe;
   color-scheme: light dark;
 }
 
