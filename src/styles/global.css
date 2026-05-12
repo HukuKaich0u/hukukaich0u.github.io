@@ -57,7 +57,11 @@ body {
   display: flex;
   flex-direction: column;
   background:
-    radial-gradient(1200px 620px at 12% -12%, var(--bg-accent), transparent 60%),
+    radial-gradient(
+      1200px 620px at 12% -12%,
+      var(--bg-accent),
+      transparent 60%
+    ),
     radial-gradient(900px 500px at 92% 16%, var(--bg-accent), transparent 64%),
     var(--bg);
   color: var(--text);
@@ -457,10 +461,28 @@ a:hover {
   cursor: pointer;
   list-style: none;
   padding: 0.1rem 0;
+  position: relative;
 }
 
 .toggle-section-summary::-webkit-details-marker {
   display: none;
+}
+
+.toggle-section-summary::after {
+  content: "";
+  position: absolute;
+  left: 1.18rem;
+  bottom: 0;
+  width: clamp(2.4rem, 18vw, 3.4rem);
+  height: 2px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--link) 78%, transparent);
+  opacity: 0;
+  transform: scaleX(0.35);
+  transform-origin: left center;
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease;
 }
 
 .toggle-section-title {
@@ -469,6 +491,8 @@ a:hover {
   justify-content: flex-start;
   gap: 0.72rem;
   margin-bottom: 0;
+  transform-origin: left center;
+  transition: transform 160ms ease;
 }
 
 .toggle-section-title::after {
@@ -484,6 +508,42 @@ a:hover {
 
 .toggle-section[open] .toggle-section-title::after {
   transform: rotate(90deg);
+}
+
+.toggle-section[open] > .toggle-section-summary::after {
+  opacity: 0.72;
+  transform: scaleX(0.82);
+}
+
+.toggle-section-summary:focus-visible {
+  outline: none;
+}
+
+.toggle-section-summary:focus-visible::after {
+  opacity: 0.88;
+  transform: scaleX(1);
+}
+
+.toggle-section-summary:focus-visible .toggle-section-title {
+  transform: scale(1.02);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .toggle-section-summary:hover::after {
+    opacity: 0.88;
+    transform: scaleX(1);
+  }
+
+  .toggle-section-summary:hover .toggle-section-title {
+    transform: scale(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle-section-title,
+  .toggle-section-summary::after {
+    transition: none;
+  }
 }
 
 .toggle-section .history-list,
